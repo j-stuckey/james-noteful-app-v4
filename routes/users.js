@@ -8,8 +8,6 @@ const User = require('../models/user');
 
 const router = express.Router();
 
-router.use('/', passport.authenticate('jwt', { session: false, failWithError: true }));
-
 router.post('/', (req, res, next) => {
 
     const requiredFields = ['username', 'password'];

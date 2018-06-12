@@ -12,6 +12,7 @@ router.use('/', passport.authenticate('jwt', { session: false, failWithError: tr
 
 /* ========== GET/READ ALL ITEMS ========== */
 router.get('/', (req, res, next) => {
+    
     const { searchTerm, folderId, tagId } = req.query;
 
     let filter = {};
@@ -39,6 +40,8 @@ router.get('/', (req, res, next) => {
             next(err);
         });
 });
+
+
 
 /* ========== GET/READ A SINGLE ITEM ========== */
 router.get('/:id', (req, res, next) => {

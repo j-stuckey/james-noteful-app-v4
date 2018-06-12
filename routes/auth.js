@@ -10,6 +10,7 @@ const router = express.Router();
 const options = { session: false, failWithError: true };
 
 const localAuth = passport.authenticate('local', options);
+const jwtAuth = passport.authenticate('jwt', { session: false, failWithError: true });
 
 function createAuthToken(user) {
     return jwt.sign({user}, JWT_SECRET, {
@@ -18,9 +19,12 @@ function createAuthToken(user) {
     });
 }
 
-router.use('/', passport.authenticate('jwt', { session: false, failWithError: true }));
-
 router.post('/', localAuth, (req, res) => {
+    const authToken = createAuthToken(req.user);
+    res.json({ authToken });
+});
+
+router.post('/refresh', jwtAuth, (req, res) => {
     const authToken = createAuthToken(req.user);
     res.json({ authToken });
 });
