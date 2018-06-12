@@ -36,7 +36,7 @@ app.use('/api/notes', notesRouter);
 app.use('/api/folders', foldersRouter);
 app.use('/api/tags', tagsRouter);
 app.use('/api/users', usersRouter);
-app.use('/api/auth', authRouter);
+app.use('/', authRouter);
 
 // Custom 404 Not Found route handler
 app.use((req, res, next) => {
@@ -51,6 +51,7 @@ app.use((err, req, res, next) => {
         const errBody = Object.assign({}, err, { message: err.message });
         res.status(err.status).json(errBody);
     } else {
+        console.log(err);
         res.status(500).json({ message: 'Internal Server Error' });
     }
 });

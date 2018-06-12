@@ -4,12 +4,13 @@ const express = require('express');
 const passport = require('passport');
 
 const router = express.Router();
-const options = { sessions: false, failWithError: true };
+const options = { session: false, failWithError: true };
 
 const localAuth = passport.authenticate('local', options);
 
-router.post('/', localAuth, (req, res) => {
-    return req.json(req.user);
+router.post('/api/login', localAuth, (req, res) => {
+    console.log('in the login');
+    return res.json(req.user);
 });
 
 module.exports = router;
