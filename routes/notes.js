@@ -163,6 +163,7 @@ router.put('/:id', (req, res, next) => {
 /* ========== DELETE/REMOVE A SINGLE ITEM ========== */
 router.delete('/:id', (req, res, next) => {
     const { id } = req.params;
+    const userId = req.user.id;
 
     /***** Never trust users - validate input *****/
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -171,7 +172,7 @@ router.delete('/:id', (req, res, next) => {
         return next(err);
     }
 
-    Note.findByIdAndRemove(id)
+    Note.findByIdAndRemove({_id: id, userId})
         .then(() => {
             res.sendStatus(204);
         })
