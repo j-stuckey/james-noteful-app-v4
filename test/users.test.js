@@ -142,10 +142,62 @@ describe.only('Noteful API - Users', function () {
                         expect(res.body.message).to.equal('Field: \'username\' must be at least 1 characters long');
                     });
             });
-            it('Should reject users with password less than 8 characters');
-            it('Should reject users with password greater than 72 characters');
-            it('Should reject users with duplicate username');
-            it('Should trim fullname');
+
+            it('Should reject users with password less than 8 characters', function() {
+                const testUser = { username, password, fullname };
+                testUser.password = '1234';
+
+                return chai.request(app).post('/api/users').send(testUser)
+                    .then(res => {
+                        expect(res).to.have.status(422);
+                        expect(res.body.message).to.equal('Field: \'password\' must be at least 8 characters long');
+                    }); 
+            });
+
+            it('Should reject users with password greater than 72 characters', function(){
+                const testUser = { username, password, fullname };
+                testUser.password = 'passwordpasswordpasswordpasswordpasswordpasswordpasswordpasswordpasswords';
+
+                return chai.request(app).post('/api/users').send(testUser)
+                    .then(res => {
+                        expect(res).to.have.status(422);
+                        expect(res.body.message).to.equal('Field: \'password\' must be at most 72 characters long');
+                    }); 
+            });
+            it('Should reject users with duplicate username', function(){
+                const testUser = { username, password, fullname };
+                return User.create(testUser)
+                    .then(() => {
+                        return chai
+                            .request(app)
+                            .post('/api/users').send({
+                                username,
+                                password,
+                                fullname
+                            });
+                    })
+                    .then(res => {
+                        expect(res).to.have.status(400);
+                        expect(res.body.message).to.equal('The username already exists');
+                    }); 
+ 
+            });
+
+            it('Should trim fullname', function() {
+                const testUser = { username, password, fullname: `   ${fullname}   `};
+
+                return chai.request(app).post('/api/users').send(testUser)
+                    .then(res => {
+                        expect(res).to.have.status(201);
+                        expect(res.body).to.have.keys('id', 'username', 'fullname');
+                        expect(res.body.fullname).to.equal(fullname);
+                        return User.findOne({ username });
+                    })
+                    .then( user => {
+                        expect(user).to.not.be.null;
+                        expect(user.fullname).to.equal(fullname);
+                    });
+            });
         });
 
     });
