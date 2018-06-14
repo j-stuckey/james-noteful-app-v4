@@ -147,7 +147,7 @@ router.put('/:id', (req, res, next) => {
 
     const updateNote = { title, content, folderId, tags, userId };
 
-    Note.findOneAndUpdate({_id: id, userId }, updateNote, { new: true })
+    Note.findOneAndUpdate({ _id: id, userId }, updateNote, { new: true })
         .then(result => {
             if (result) {
                 res.json(result);
