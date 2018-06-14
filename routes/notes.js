@@ -9,7 +9,7 @@ const Folder = require('../models/folder');
 const Tag = require('../models/tag');
 
 function validateFolderId(folderId, userId){
-    if (!folderId) {
+    if (folderId === undefined) {
         return Promise.resolve();
     }
 
@@ -30,7 +30,7 @@ function validateFolderId(folderId, userId){
 }
 
 function validateTagIds(tags, userId) {
-    if (!tags) {
+    if (tags === undefined) {
         return Promise.resolve();
     }
     if (!Array.isArray(tags)) {
@@ -126,19 +126,9 @@ router.post('/', (req, res, next) => {
     }
 
     Promise.all([
-        validateFolderId(),
-        validateTagIds()
+        validateFolderId(folderId, userId),
+        validateTagIds(tags, userId),
     ])
-        .catch(err => {
-            if (err === 'The `folderId` is not valid') {
-                err = new Error('The folder is not valid');
-                err.status = 400;
-            }
-            if (err === 'The `tags` must be an array') {
-                err = new Error('The tag is not valid');
-                err.status = 400;
-            }
-        })
         .then(() => Note.create(newNote))
         .then(result => {
             res
@@ -176,8 +166,8 @@ router.put('/:id', (req, res, next) => {
     }
 
     Promise.all([
-        validateFolderId(),
-        validateTagIds(),
+        validateFolderId(folderId, userId),
+        validateTagIds(tags, userId),
     ])
         .then(() => {
             return Note.findByIdAndUpdate(id, updateNote, { new: true })
