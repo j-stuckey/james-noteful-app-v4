@@ -294,7 +294,9 @@ describe('Noteful API - Folders', function () {
             return Folder.findOne()
                 .then(_data => {
                     data = _data;
-                    return chai.request(app).delete(`/api/folders/${data.id}`);
+                    return chai.request(app)
+                        .delete(`/api/folders/${data.id}`)
+                        .set('Authorization', `Bearer ${token}`);
                 })
                 .then(function (res) {
                     expect(res).to.have.status(204);
@@ -309,6 +311,7 @@ describe('Noteful API - Folders', function () {
         it('should respond with a 400 for an invalid id', function () {
             return chai.request(app)
                 .delete('/api/folders/NOT-A-VALID-ID')
+                .set('Authorization', `Bearer ${token}`)
                 .then(res => {
                     expect(res).to.have.status(400);
                     expect(res.body.message).to.equal('The `id` is not valid');
