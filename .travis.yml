@@ -1,3 +1,10 @@
 language: node_js
 node_js: node
 services: mongodb
+deploy:
+  provider: heroku
+  api_key:
+    secure: V8BHQcqAhpoynIcP4nFhkMqd/NLn3osmJwfLnroM2emSWWsS851uA6gZBwpzSb6TGeROPjnmrWCSwMFj+FsBfBAPjSSkXJZnFVCCTXnZTgKHCMlB3SfKAAcaUHJIryTDB7ZSCjKYNodgypEMIIB5YSiY0MneWdB80w5kmOnfzwvE6JZBv2gkCQTlEd+gHUSPolFWLTSyFlAguXWWgO62ukfhskjRhfYNAaIKB4QYMdGS8ZpbrEWmSkheK4dvZvH+GsdJ2JWyRvJph+LdB5I+Winl5rW9GNPSScYTffV9eDIb2/PHBeoPflriY5HUzItwwclKownEuttvcLDCSpAaM5GkQoUleSoO2uhzu3r8lh0MAhs7y6ug3OOrUm4dgUCwWGXNnUXqtnSw6Ziu8SA/mimsN++gohKRpVKZhrWKAy0UJ/BXpYW2mH634tDe4IJdfW6U48TovE3IZ5QZoDcIZ8fTt5BOKBDa0W0D4HkukRflogGIw82wySlSZJPTU+IbD4A98L1yuTdGyR/+P0PsMUi00HiK5Ky7G6BAC3U/AhYBWp8+FeGEuFUUoDJec0Trges5oOu7rQ35Qx4Sw6wf/wbQN8y6RkxIbYEP2WMwiB+Gpc0wQY/QBDNsCFCYW+UPdib8dvy3e2og6Kp3HRH7dL/j73QC9+L5jvLggA91Mgc=
+  app: james-noteful-app-v4
+  on:
+    repo: thinkful-ei21/james-noteful-app-v4
