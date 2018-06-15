@@ -27,7 +27,7 @@ describe('Noteful API - Notes', function () {
     before(function () {
         return mongoose.connect(TEST_MONGODB_URI)
             .then(() => mongoose.connection.db.dropDatabase());
-    });
+    }); 
 
     let token;
     let user;
