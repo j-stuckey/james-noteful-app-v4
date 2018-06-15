@@ -19,6 +19,7 @@ const api = (function () {
             headers: {'Authorization': `Bearer ${store.authToken}`}
         });
     };
+    
     const update = function (path, obj) {
         return $.ajax({
             type: 'PUT',
