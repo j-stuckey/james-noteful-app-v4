@@ -17,16 +17,25 @@ const expect = chai.expect;
 
 describe('Noteful API - Login', function(){
 
+    let token;
+    const _id = '333333333333333333333333';
+    const fullname = 'Example User';
+    const username = 'exampleUser';
+    const password = 'examplePassword';
+
     before(function () {
         return mongoose.connect(TEST_MONGODB_URI)
             .then(() => mongoose.connection.db.dropDatabase());
     });
 
-    beforeEach(function() {
-        return Promise.all([
-            User.insertMany(seedUsers),
-            User.createIndexes
-        ]);
+    beforeEach(function () {
+        return User.hashPassword(password)
+            .then(digest => User.create({
+                _id,
+                fullname,
+                username,
+                password: digest
+            }));
     });
 
     afterEach(function () {
@@ -39,32 +48,53 @@ describe('Noteful API - Login', function(){
 
     describe('POST /api/login',  function(){
         it('should return a token when given valid credentials', function() {
-            return User.findOne()
-                .then (res => {
-                    const user = { 
-                        username: res.username,
-                        password: 'basketball'
-                    };
-
-                    return chai.request(app)
-                        .post('/api/login')
-                        .send(user);
-                })
+            return chai.request(app)
+                .post('/api/login')
+                .send({ username, password })
                 .then(res => {
                     expect(res).to.have.status(200);
                     expect(res.body).to.be.an('object');
-                    expect(res.body).to.have.all.keys('authToken');
                     expect(res.body.authToken).to.be.a('string');
+
+                    const payload = jwt.verify(res.body.authToken, JWT_SECRET);
+
+                    expect(payload.user).to.not.have.property('password');
+                    expect(payload.user.id).to.equal(_id);
+                    expect(payload.user.username).to.deep.equal(username);
                 });
         });
 
-        it('should return status 400 for missing credentials', () => {
-            return chai.request(app).post('/api/login').send({})
+        it('should reject requests without credentials', () => {
+            return chai.request(app)
+                .post('/api/login')
+                .send({})
                 .then(res => {
                     expect(res).to.have.status(400);
                     expect(res.body).to.be.an('object');
                     expect(res.body.message).to.equal('Bad Request');
                     expect(res.body.name).to.equal('AuthenticationError');
+                });
+        });
+
+        it('Should reject requests with empty string username', function () {
+            return chai.request(app)
+                .post('/api/login')
+                .send({ username: '', password })
+                .then(res => {
+                    expect(res).to.have.status(400);
+                    expect(res.body).to.be.an('object');
+                    expect(res.body.message).to.equal('Bad Request');
+                });
+        });
+
+        it('Should reject requests with empty string password', function () {
+            return chai.request(app)
+                .post('/api/login')
+                .send({ username, password: '' })
+                .then(res => {
+                    expect(res).to.have.status(400);
+                    expect(res.body).to.be.an('object');
+                    expect(res.body.message).to.equal('Bad Request');
                 });
         });
 
@@ -82,4 +112,5 @@ describe('Noteful API - Login', function(){
 
 
     });
+
 });
